@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] Transform playerHandTransform, enemyHandTransform, enemyFieldTransform;
+    [SerializeField] Transform playerHandTransform, playerFieldTransform, enemyHandTransform, enemyFieldTransform;
     [SerializeField] CardController cardPrefab;
 
     bool isPlayerTurn;
@@ -61,10 +61,31 @@ public class GameManager : MonoBehaviour
     void EnemyTurn()
     {
         Debug.Log("EnemyTurn");
-        CardController[] cardList = enemyHandTransform.GetComponentsInChildren<CardController>();
-        CardController card = cardList[0];
-        card.movement.SetCardTransform(enemyFieldTransform);
+
+        // 場にカードを出す
+        CardController[] handCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        CardController enemyCard = handCardList[0];
+        enemyCard.movement.SetCardTransform(enemyFieldTransform);
+
+        // 攻撃
+        // フィールのカードリストを取得
+        // attacker 選択
+        CardController[] filedCardList = enemyFieldTransform.GetComponentsInChildren<CardController>();
+        CardController attacker = filedCardList[0];
+
+        // defender 選択
+        CardController[] playerFieldCardList = playerFieldTransform.GetComponentsInChildren<CardController>();
+        CardController defender = playerFieldCardList[0];
+
+        // 戦闘開始
+        CardsBattle(attacker, defender);
         ChangeTurn();
+    }
+
+    void CardsBattle(CardController attacker, CardController defender)
+    {
+        attacker.model.Attack(defender);
+        defender.model.Attack(attacker);
     }
 
     void CreateCard(Transform hand)
