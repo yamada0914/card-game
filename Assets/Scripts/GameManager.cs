@@ -43,6 +43,14 @@ public class GameManager : MonoBehaviour
     public void ChangeTurn()
     {
         isPlayerTurn = !isPlayerTurn;
+        if (isPlayerTurn)
+        {
+            CreateCard(playerHandTransform);
+        }
+        else
+        {
+            CreateCard(enemyHandTransform);
+        }
         TurnCalc();
     }
 
