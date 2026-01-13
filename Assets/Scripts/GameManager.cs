@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] Transform playerHandTransform, enemyHandTransform;
+    [SerializeField] Transform playerHandTransform, enemyHandTransform, enemyFieldTransform;
     [SerializeField] CardController cardPrefab;
 
     bool isPlayerTurn;
@@ -61,6 +61,9 @@ public class GameManager : MonoBehaviour
     void EnemyTurn()
     {
         Debug.Log("EnemyTurn");
+        CardController[] cardList = enemyHandTransform.GetComponentsInChildren<CardController>();
+        CardController card = cardList[0];
+        card.movement.SetCardTransform(enemyFieldTransform);
         ChangeTurn();
     }
 
