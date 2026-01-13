@@ -8,6 +8,7 @@ public class CardModel
     public int at;
     public int cost;
     public Sprite icon;
+    public bool isAlive;
 
     public CardModel(int cardID)
     {
@@ -17,6 +18,7 @@ public class CardModel
         at = cardEntity.at;
         cost = cardEntity.cost;
         icon = cardEntity.icon;
+        isAlive = true;
     }
     void Damage(int dmg)
     {
@@ -24,6 +26,7 @@ public class CardModel
         if (hp <= 0)
         {
             hp = 0;
+            isAlive = false;
         }
     }
 

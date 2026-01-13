@@ -86,6 +86,8 @@ public class GameManager : MonoBehaviour
     {
         attacker.model.Attack(defender);
         defender.model.Attack(attacker);
+        attacker.CheckIsAlive();
+        defender.CheckIsAlive();
     }
 
     void CreateCard(Transform hand)
