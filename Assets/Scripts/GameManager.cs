@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -6,6 +7,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] CardController cardPrefab;
 
     bool isPlayerTurn;
+
+    // シングルトン化
+    public static GameManager instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
 
     void Start()
     {
@@ -57,6 +69,11 @@ public class GameManager : MonoBehaviour
     void PlayerTurn()
     {
         Debug.Log("PlayerTurn");
+        CardController[] playerFieldCardList = playerFieldTransform.GetComponentsInChildren<CardController>();
+        foreach (CardController card in playerFieldCardList)
+        {
+            card.SetCanAttack(true);
+        }
     }
     void EnemyTurn()
     {
@@ -69,23 +86,27 @@ public class GameManager : MonoBehaviour
 
         // 攻撃
         // フィールのカードリストを取得
-        // attacker 選択
         CardController[] filedCardList = enemyFieldTransform.GetComponentsInChildren<CardController>();
-        CardController attacker = filedCardList[0];
-
-        // defender 選択
+        CardController[] enemyCanAttackCardList = Array.FindAll(filedCardList, card => card.model.canAttack);
         CardController[] playerFieldCardList = playerFieldTransform.GetComponentsInChildren<CardController>();
-        CardController defender = playerFieldCardList[0];
 
-        // 戦闘開始
-        CardsBattle(attacker, defender);
+        if (enemyCanAttackCardList.Length > 0 && playerFieldCardList.Length > 0)
+        {
+            // attacker 選択
+            CardController attacker = enemyCanAttackCardList[0];
+            // defender 選択
+            CardController defender = playerFieldCardList[0];
+            // 戦闘開始
+            CardsBattle(attacker, defender);
+        }
+
         ChangeTurn();
     }
 
-    void CardsBattle(CardController attacker, CardController defender)
+    public void CardsBattle(CardController attacker, CardController defender)
     {
-        attacker.model.Attack(defender);
-        defender.model.Attack(attacker);
+        attacker.Attack(defender);
+        defender.Attack(attacker);
         attacker.CheckIsAlive();
         defender.CheckIsAlive();
     }

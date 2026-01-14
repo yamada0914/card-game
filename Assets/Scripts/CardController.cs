@@ -17,6 +17,18 @@ public class CardController : MonoBehaviour
         model = new CardModel(cardID);
         views.Show(model);
     }
+
+    public void Attack(CardController enemyCard)
+    {
+        model.Attack(enemyCard);
+        SetCanAttack(false);
+    }
+
+    public void SetCanAttack(bool canAttack)
+    {
+        model.canAttack = canAttack;
+        views.SetActivateSelectablePanel(canAttack);
+    }
     public void CheckIsAlive()
     {
         if (model.isAlive)
