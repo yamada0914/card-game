@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +13,14 @@ public class GameManager : MonoBehaviour
     //デッキの生成
     List<int> playerDeck = new List<int>() { 3, 1, 1, 2, 2};
     List<int> enemyDeck = new List<int>() {3, 2, 1, 2, 1};
+
+    [SerializeField] Text playerHeroHpText;
+    [SerializeField] Text enemyHeroHpText;
+
+    const int INITIAL_HERO_HP = 30;
+
+    int playerHeroHp;
+    int enemyHeroHp;
 
     // シングルトン化
     public static GameManager instance;
@@ -31,6 +40,9 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+        playerHeroHp = INITIAL_HERO_HP;
+        enemyHeroHp = INITIAL_HERO_HP;
+        ShowHeroHp();
         SettingInitHand();
         isPlayerTurn = true;
         TurnCalc();
@@ -134,4 +146,22 @@ public class GameManager : MonoBehaviour
         defender.CheckIsAlive();
     }
 
+    void ShowHeroHp()
+    {
+        playerHeroHpText.text = playerHeroHp.ToString();
+        enemyHeroHpText.text = enemyHeroHp.ToString();
+    }
+    public void AttackToHero(CardController attacker, bool isPlayerCard)
+    {
+        if (isPlayerCard)
+        {
+            enemyHeroHp -= attacker.model.at;
+        }
+        else
+        {
+            playerHeroHp -= attacker.model.at;
+        }
+        attacker.SetCanAttack(false);
+        ShowHeroHp();
+    }
 }
