@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -7,6 +8,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] CardController cardPrefab;
 
     bool isPlayerTurn;
+
+    //デッキの生成
+    List<int> playerDeck = new List<int>() { 3, 1, 1, 2, 2};
+    List<int> enemyDeck = new List<int>() {3, 2, 1, 2, 1};
 
     // シングルトン化
     public static GameManager instance;
@@ -35,9 +40,27 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < 3; i++)
         {
-            CreateCard(playerHandTransform);
-            CreateCard(enemyHandTransform);
+            GiveCardToHand(playerDeck, playerHandTransform);
+            GiveCardToHand(enemyDeck, enemyHandTransform);
         }
+    }
+
+    void GiveCardToHand(List<int> deck, Transform hand)
+    {
+        if (deck.Count == 0)
+        {
+            return;
+        }
+        int cardID = deck[0];
+        deck.RemoveAt(0);
+        CreateCard(cardID, hand);
+    }
+
+    void CreateCard(int cardID, Transform hand)
+    {
+        // カードの生成とデータの受け渡し
+        CardController card = Instantiate(cardPrefab, hand, false);
+        card.Init(cardID);
     }
 
     void TurnCalc()
@@ -51,17 +74,17 @@ public class GameManager : MonoBehaviour
             EnemyTurn();
         }
     }
-    
+
     public void ChangeTurn()
     {
         isPlayerTurn = !isPlayerTurn;
         if (isPlayerTurn)
         {
-            CreateCard(playerHandTransform);
+            GiveCardToHand(playerDeck, playerHandTransform);
         }
         else
         {
-            CreateCard(enemyHandTransform);
+            GiveCardToHand(enemyDeck, enemyHandTransform);
         }
         TurnCalc();
     }
@@ -109,13 +132,6 @@ public class GameManager : MonoBehaviour
         defender.Attack(attacker);
         attacker.CheckIsAlive();
         defender.CheckIsAlive();
-    }
-
-    void CreateCard(Transform hand)
-    {
-        // カードの生成とデータの受け渡し
-        CardController card = Instantiate(cardPrefab, hand, false);
-        card.Init(1);
     }
 
 }
