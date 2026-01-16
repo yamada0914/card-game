@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] GameObject resultPanel;
+    [SerializeField] Text resultText;
     [SerializeField] Transform playerHandTransform, playerFieldTransform, enemyHandTransform, enemyFieldTransform;
     [SerializeField] CardController cardPrefab;
 
@@ -17,7 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Text playerHeroHpText;
     [SerializeField] Text enemyHeroHpText;
 
-    const int INITIAL_HERO_HP = 30;
+    const int INITIAL_HERO_HP = 2;
 
     int playerHeroHp;
     int enemyHeroHp;
@@ -40,12 +42,32 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+        resultPanel.SetActive(false);
         playerHeroHp = INITIAL_HERO_HP;
         enemyHeroHp = INITIAL_HERO_HP;
         ShowHeroHp();
         SettingInitHand();
         isPlayerTurn = true;
         TurnCalc();
+    }
+
+    public void RestartGame()
+    {
+        ClearTransformChildren(playerHandTransform, enemyHandTransform, playerFieldTransform, enemyFieldTransform);
+        playerDeck = new List<int>() { 3, 1, 1, 2, 2};
+        enemyDeck = new List<int>() {3, 2, 1, 2, 1};
+        StartGame();
+    }
+
+    void ClearTransformChildren(params Transform[] transforms)
+    {
+        foreach (Transform parent in transforms)
+        {
+            foreach (Transform child in parent)
+            {
+                Destroy(child.gameObject);
+            }
+        }
     }
 
     void SettingInitHand()
@@ -176,5 +198,21 @@ public class GameManager : MonoBehaviour
         }
         attacker.SetCanAttack(false);
         ShowHeroHp();
+        CheckHeroHp();
+    }
+    void CheckHeroHp()
+    {
+        if (playerHeroHp <= 0 || enemyHeroHp <= 0)
+        {
+            resultPanel.SetActive(true);
+            if (playerHeroHp <= 0)
+            {
+                resultText.text = "Lose";
+            }
+            else
+            {
+                resultText.text = "Win";
+            }
+        }
     }
 }
