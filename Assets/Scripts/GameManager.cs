@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class GameManager : MonoBehaviour
 
     const int INITIAL_HERO_HP = 2;
     const int INITIAL_MANA_COST = 1;
+    const int TIME_LIMIT = 8;
 
     int playerHeroHp;
     int enemyHeroHp;
@@ -32,6 +34,9 @@ public class GameManager : MonoBehaviour
 
     int playerDefaultManaCost;
     int enemyDefaultManaCost;
+
+    [SerializeField] Text timeCountText;
+    int timeCount;
 
     // シングルトン化
     public static GameManager instance;
@@ -130,14 +135,29 @@ public class GameManager : MonoBehaviour
 
     void TurnCalc()
     {
+        StopAllCoroutines();
+        StartCoroutine(CountDown());
         if (isPlayerTurn)
         {
             PlayerTurn();
         }
         else
         {
-            EnemyTurn();
+            StartCoroutine(EnemyTurn());
         }
+    }
+
+    IEnumerator CountDown()
+    {
+        timeCount = TIME_LIMIT;
+        timeCountText.text = timeCount.ToString();
+        while (timeCount > 0)
+        {
+            yield return new WaitForSeconds(1); // 1 秒待機s
+            timeCount--;
+            timeCountText.text = timeCount.ToString();
+        }
+        ChangeTurn();
     }
 
     public void ChangeTurn()
@@ -168,7 +188,7 @@ public class GameManager : MonoBehaviour
             card.SetCanAttack(true);
         }
     }
-    void EnemyTurn()
+    IEnumerator EnemyTurn()
     {
         Debug.Log("EnemyTurn");
 
@@ -177,6 +197,8 @@ public class GameManager : MonoBehaviour
         {
             card.SetCanAttack(true);
         }
+
+        yield return new WaitForSeconds(1);
 
         // 場にカードを出す
         CardController[] handCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
@@ -188,6 +210,8 @@ public class GameManager : MonoBehaviour
             ReduceManaCost(enemyCard.model.cost, false);
             enemyCard.model.isFeildCard = true;
         }
+
+        yield return new WaitForSeconds(1);
 
         // 攻撃
         // フィールのカードリストを取得
@@ -212,6 +236,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        yield return new WaitForSeconds(1);
         ChangeTurn();
     }
 
