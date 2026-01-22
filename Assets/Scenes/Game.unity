@@ -322,6 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ead1866b35744d138316ef11ab35712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 1
 --- !u!1 &355153535
 GameObject:
   m_ObjectHideFlags: 0
@@ -430,6 +431,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c09b8924834c44452a43e0c4faa5ae51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resultPanel: {fileID: 1950563036}
+  resultText: {fileID: 355153537}
   playerHandTransform: {fileID: 497539889}
   playerFieldTransform: {fileID: 205127875}
   enemyHandTransform: {fileID: 629512329}
@@ -437,6 +440,10 @@ MonoBehaviour:
   cardPrefab: {fileID: -9210921529992164564, guid: 7181671fcf41a4d95a976c9280a6a96d, type: 3}
   playerHeroHpText: {fileID: 428350893}
   enemyHeroHpText: {fileID: 2109484465}
+  playerManaCostText: {fileID: 909227760}
+  enemyManaCostText: {fileID: 1388962659}
+  playerManaCost: 0
+  enemyManaCost: 0
 --- !u!4 &427562759
 Transform:
   m_ObjectHideFlags: 0
@@ -646,6 +653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ead1866b35744d138316ef11ab35712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,7 +905,7 @@ GameObject:
   - component: {fileID: 909227761}
   - component: {fileID: 909227760}
   m_Layer: 5
-  m_Name: CostText
+  m_Name: PlayerCostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1572,7 +1580,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1456731270}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 427562758}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: RestartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1456731270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1898,7 +1918,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1950563037
 RectTransform:
   m_ObjectHideFlags: 0

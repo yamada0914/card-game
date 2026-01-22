@@ -13,16 +13,25 @@ public class GameManager : MonoBehaviour
     bool isPlayerTurn;
 
     //デッキの生成
-    List<int> playerDeck = new List<int>() { 3, 1, 1, 2, 2};
+    List<int> playerDeck = new List<int>() { 3, 1, 2, 2, 2};
     List<int> enemyDeck = new List<int>() {3, 2, 1, 2, 1};
 
     [SerializeField] Text playerHeroHpText;
     [SerializeField] Text enemyHeroHpText;
 
     const int INITIAL_HERO_HP = 2;
+    const int INITIAL_MANA_COST = 1;
 
     int playerHeroHp;
     int enemyHeroHp;
+
+    [SerializeField] Text playerManaCostText;
+    [SerializeField] Text enemyManaCostText;
+    public int playerManaCost;
+    int enemyManaCost;
+
+    int playerDefaultManaCost;
+    int enemyDefaultManaCost;
 
     // シングルトン化
     public static GameManager instance;
@@ -45,10 +54,32 @@ public class GameManager : MonoBehaviour
         resultPanel.SetActive(false);
         playerHeroHp = INITIAL_HERO_HP;
         enemyHeroHp = INITIAL_HERO_HP;
+        playerManaCost = INITIAL_MANA_COST;
+        enemyManaCost = INITIAL_MANA_COST;
+        playerDefaultManaCost = INITIAL_MANA_COST;
+        enemyDefaultManaCost = INITIAL_MANA_COST;
         ShowHeroHp();
+        ShowManaCost();
         SettingInitHand();
         isPlayerTurn = true;
         TurnCalc();
+    }
+    void ShowManaCost()
+    {
+        playerManaCostText.text = playerManaCost.ToString();
+        enemyManaCostText.text = enemyManaCost.ToString();
+    }
+    public void ReduceManaCost(int cost, bool isPlayerCard)
+    {
+        if (isPlayerCard)
+        {
+            playerManaCost -= cost;
+        }
+        else
+        {
+            enemyManaCost -= cost;
+        }
+        ShowManaCost();
     }
 
     public void RestartGame()
@@ -114,12 +145,17 @@ public class GameManager : MonoBehaviour
         isPlayerTurn = !isPlayerTurn;
         if (isPlayerTurn)
         {
+            playerDefaultManaCost++;
+            playerManaCost = playerDefaultManaCost;
             GiveCardToHand(playerDeck, playerHandTransform);
         }
         else
         {
+            enemyDefaultManaCost++;
+            enemyManaCost = enemyDefaultManaCost;
             GiveCardToHand(enemyDeck, enemyHandTransform);
         }
+        ShowManaCost();
         TurnCalc();
     }
 
@@ -144,8 +180,14 @@ public class GameManager : MonoBehaviour
 
         // 場にカードを出す
         CardController[] handCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
-        CardController enemyCard = handCardList[0];
-        enemyCard.movement.SetCardTransform(enemyFieldTransform);
+        CardController[] selectableHandCardList = Array.FindAll(handCardList, card => card.model.cost <= enemyManaCost);
+        if (selectableHandCardList.Length > 0)
+        {
+            CardController enemyCard = selectableHandCardList[0];
+            enemyCard.movement.SetCardTransform(enemyFieldTransform);
+            ReduceManaCost(enemyCard.model.cost, false);
+            enemyCard.model.isFeildCard = true;
+        }
 
         // 攻撃
         // フィールのカードリストを取得
