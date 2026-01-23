@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using System.Collections;
+using DG.Tweening;
 public class CardMovement : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     public Transform defaultParent;
@@ -9,12 +12,12 @@ public class CardMovement : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     public void OnBeginDrag(PointerEventData eventData)
     {
         CardController card = GetComponent<CardController>();
-        if (!card.model.isFeildCard && card.model.cost <= GameManager.instance.playerManaCost)
+        if (!card.model.isFieldCard && card.model.cost <= GameManager.instance.playerManaCost)
         {
             isDraggable = true;
         }
 
-        else if (card.model.isFeildCard && card.model.canAttack)
+        else if (card.model.isFieldCard && card.model.canAttack)
         {
             isDraggable = true;
         }
@@ -49,9 +52,34 @@ public class CardMovement : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         transform.SetParent(defaultParent, false);
         GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
-    public void SetCardTransform(Transform parentTransform)
+
+    public IEnumerator MoveToField(Transform field)
     {
-        defaultParent = parentTransform;
+        // 一度親を Canvas に変更する
+        transform.SetParent(defaultParent.parent);
+        // Dotween でカードをフィールドに移動
+        transform.DOMove(field.position, 0.25f);
+        yield return new WaitForSeconds(0.25f);
+
+        defaultParent = field;
         transform.SetParent(defaultParent);
+    }
+    public IEnumerator MoveToTarget(Transform target)
+    {
+        Vector3 currentPosition = transform.position;
+        // 一度親を Canvas に変更する
+        transform.SetParent(defaultParent.parent);
+        // Dotween でカードを対象に移動
+        transform.DOMove(target.position, 0.25f);
+        yield return new WaitForSeconds(0.25f);
+        // 元の位置に戻す
+        transform.position = currentPosition;
+        yield return new WaitForSeconds(0.25f);
+        transform.SetParent(defaultParent);
+    }
+
+    void Start()
+    {
+        defaultParent = transform.parent;
     }
 }
