@@ -440,10 +440,11 @@ MonoBehaviour:
   cardPrefab: {fileID: -9210921529992164564, guid: 7181671fcf41a4d95a976c9280a6a96d, type: 3}
   playerHeroHpText: {fileID: 428350893}
   enemyHeroHpText: {fileID: 2109484465}
+  playerHero: {fileID: 1601818276}
   playerManaCostText: {fileID: 909227760}
   enemyManaCostText: {fileID: 1388962659}
   playerManaCost: 0
-  enemyManaCost: 0
+  timeCountText: {fileID: 1120421891}
 --- !u!4 &427562759
 Transform:
   m_ObjectHideFlags: 0

@@ -39,7 +39,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] Text timeCountText;
     int timeCount;
- 
     // シングルトン化
     public static GameManager instance;
 
@@ -132,7 +131,14 @@ public class GameManager : MonoBehaviour
     {
         // カードの生成とデータの受け渡し
         CardController card = Instantiate(cardPrefab, hand, false);
-        card.Init(cardID);
+        if (hand.name == "PlayerHand")
+        {
+            card.Init(cardID, true);
+        }
+        else
+        {
+            card.Init(cardID, false);
+        }
     }
 
     void TurnCalc()
@@ -202,7 +208,7 @@ public class GameManager : MonoBehaviour
         SettingCanAttackView(playerFieldCardList, true);
     }
 
-     IEnumerator EnemyTurn()
+    IEnumerator EnemyTurn()
     {
         Debug.Log("Enemyのターン");
         // フィールドのカードを攻撃可能にする
@@ -244,14 +250,14 @@ public class GameManager : MonoBehaviour
             CardController[] enemyCanAttackCardList = Array.FindAll(fieldCardList, card => card.model.canAttack); // 検索：Array.FindAll
             CardController[] playerFieldCardList = playerFieldTransform.GetComponentsInChildren<CardController>();
 
-            // attackerカードを選択
+            // attacker カードを選択
             CardController attacker = enemyCanAttackCardList[0];
 
             if (playerFieldCardList.Length > 0)
             {
-                // defenderカードを選択
+                // defender カードを選択
                 CardController defender = playerFieldCardList[0];
-                // attackerとdefenderを戦わせる
+                // attacker と defender を戦わせる
                 StartCoroutine(attacker.movement.MoveToTarget(defender.transform));
                 yield return new WaitForSeconds(0.25f);
                 CardsBattle(attacker, defender);
@@ -261,6 +267,8 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(attacker.movement.MoveToTarget(playerHero));
                 yield return new WaitForSeconds(0.25f);
                 AttackToHero(attacker, false);
+                yield return new WaitForSeconds(0.25f);
+                CheckHeroHp();
             }
             fieldCardList = enemyFieldTransform.GetComponentsInChildren<CardController>();
             yield return new WaitForSeconds(1);
@@ -295,21 +303,25 @@ public class GameManager : MonoBehaviour
         }
         attacker.SetCanAttack(false);
         ShowHeroHp();
-        CheckHeroHp();
     }
     void CheckHeroHp()
     {
         if (playerHeroHp <= 0 || enemyHeroHp <= 0)
         {
-            resultPanel.SetActive(true);
-            if (playerHeroHp <= 0)
-            {
-                resultText.text = "Lose";
-            }
-            else
-            {
-                resultText.text = "Win";
-            }
+            ShowResultPanel(playerHeroHp);
+        }
+    }
+    void ShowResultPanel(int heroHp)
+    {
+        StopAllCoroutines();
+        resultPanel.SetActive(true);
+        if (heroHp <= 0)
+        {
+            resultText.text = "Lose";
+        }
+        else
+        {
+            resultText.text = "Win";
         }
     }
 }

@@ -6,6 +6,7 @@ public class AttackedCard : MonoBehaviour, IDropHandler
 {
     public void OnDrop(PointerEventData eventData)
     {
+        // attacker 選択
         CardController attacker = eventData.pointerDrag.GetComponent<CardController>();
 
         // defender 選択
@@ -16,13 +17,14 @@ public class AttackedCard : MonoBehaviour, IDropHandler
             return;
         }
 
+        if (attacker.model.isPlayerCard == defender.model.isPlayerCard)
+        {
+            return;
+        }
+
         if (attacker.model.canAttack)
         {
             GameManager.instance.CardsBattle(attacker, defender);
-        }
-        else
-        {
-            Debug.Log("攻撃できません");
         }
     }
 }
