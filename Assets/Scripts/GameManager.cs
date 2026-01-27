@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform playerHandTransform, playerFieldTransform, enemyHandTransform, enemyFieldTransform;
     [SerializeField] CardController cardPrefab;
 
-    bool isPlayerTurn;
+    public bool isPlayerTurn;
 
     //デッキの生成
     List<int> playerDeck = new List<int>() { 3, 1, 2, 2, 2};
@@ -166,6 +166,14 @@ public class GameManager : MonoBehaviour
             timeCountText.text = timeCount.ToString();
         }
         ChangeTurn();
+    }
+
+    public void OnClickTurnEndButton()
+    {
+        if (isPlayerTurn)
+        {
+            ChangeTurn();
+        }
     }
 
     public void ChangeTurn()
