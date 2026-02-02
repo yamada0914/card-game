@@ -15,14 +15,14 @@ public class GameManager : MonoBehaviour
 
     //デッキの生成
     List<int> playerDeck = new List<int>() { 3, 1, 2, 2, 2};
-    List<int> enemyDeck = new List<int>() {3, 2, 1, 2, 1};
+    List<int> enemyDeck = new List<int>() {3, 2, 1, 1, 1};
 
     [SerializeField] Text playerHeroHpText;
     [SerializeField] Text enemyHeroHpText;
 
-    const int INITIAL_HERO_HP = 2;
+    const int INITIAL_HERO_HP = 10;
     const int INITIAL_MANA_COST = 10;
-    const int TIME_LIMIT = 8;
+    const int TIME_LIMIT = 20;
 
     int playerHeroHp;
     int enemyHeroHp;
@@ -176,6 +176,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public CardController[] GetEnemyFieldCards()
+    {
+        return enemyFieldTransform.GetComponentsInChildren<CardController>();
+    }
+
     public void ChangeTurn()
     {
         isPlayerTurn = !isPlayerTurn;
@@ -238,8 +243,7 @@ public class GameManager : MonoBehaviour
             CardController enemyCard = selectableHandCardList[0];
             // カードを移動
             StartCoroutine(enemyCard.movement.MoveToField(enemyFieldTransform));
-            ReduceManaCost(enemyCard.model.cost, false);
-            enemyCard.model.isFieldCard = true;
+            enemyCard.OnField(false);
             handCardList = enemyHandTransform.GetComponentsInChildren<CardController>();
             yield return new WaitForSeconds(1);
         }
@@ -264,10 +268,15 @@ public class GameManager : MonoBehaviour
             if (playerFieldCardList.Length > 0)
             {
                 // defender カードを選択
+                // シールドカードがあればシールドカードしか攻撃できない
+                if (Array.Exists(playerFieldCardList, card => card.model.ability == ABILITY.SHIELD))
+                {
+                    playerFieldCardList = Array.FindAll(playerFieldCardList, card => card.model.ability == ABILITY.SHIELD);
+                }
                 CardController defender = playerFieldCardList[0];
                 // attacker と defender を戦わせる
                 StartCoroutine(attacker.movement.MoveToTarget(defender.transform));
-                yield return new WaitForSeconds(0.25f);
+                yield return new WaitForSeconds(0.51f);
                 CardsBattle(attacker, defender);
             }
             else
@@ -312,7 +321,7 @@ public class GameManager : MonoBehaviour
         attacker.SetCanAttack(false);
         ShowHeroHp();
     }
-    void CheckHeroHp()
+    public void CheckHeroHp()
     {
         if (playerHeroHp <= 0 || enemyHeroHp <= 0)
         {

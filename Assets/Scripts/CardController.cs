@@ -29,6 +29,16 @@ public class CardController : MonoBehaviour
         model.canAttack = canAttack;
         views.SetActivateSelectablePanel(canAttack);
     }
+
+    public void OnField(bool isPlayer)
+    {
+        GameManager.instance.ReduceManaCost(model.cost, isPlayer);
+        model.isFieldCard = true;
+        if (model.ability == ABILITY.INIT_ATTACKABLE)
+        {
+            SetCanAttack(true);
+        }
+    }
     public void CheckIsAlive()
     {
         if (model.isAlive)

@@ -77,7 +77,6 @@ public class CardMovement : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         yield return new WaitForSeconds(0.25f);
         // 元の位置に戻す
         transform.position = currentPosition;
-        yield return new WaitForSeconds(0.25f);
         transform.SetParent(defaultParent);
         transform.SetSiblingIndex(siblingIndex);
     }
