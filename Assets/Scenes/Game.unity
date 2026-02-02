@@ -431,6 +431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c09b8924834c44452a43e0c4faa5ae51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyAI: {fileID: 0}
   resultPanel: {fileID: 1950563036}
   resultText: {fileID: 355153537}
   playerHandTransform: {fileID: 497539889}
@@ -438,12 +439,14 @@ MonoBehaviour:
   enemyHandTransform: {fileID: 629512329}
   enemyFieldTransform: {fileID: 2092541938}
   cardPrefab: {fileID: -9210921529992164564, guid: 7181671fcf41a4d95a976c9280a6a96d, type: 3}
+  isPlayerTurn: 0
   playerHeroHpText: {fileID: 428350893}
   enemyHeroHpText: {fileID: 2109484465}
   playerHero: {fileID: 1601818276}
   playerManaCostText: {fileID: 909227760}
   enemyManaCostText: {fileID: 1388962659}
   playerManaCost: 0
+  enemyManaCost: 0
   timeCountText: {fileID: 1120421891}
 --- !u!4 &427562759
 Transform:
@@ -1433,6 +1436,7 @@ GameObject:
   - component: {fileID: 1416552893}
   - component: {fileID: 1416552895}
   - component: {fileID: 1416552894}
+  - component: {fileID: 1416552896}
   m_Layer: 5
   m_Name: EnemyHero
   m_TagString: Untagged
@@ -1499,6 +1503,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1416552892}
   m_CullTransparentMesh: 1
+--- !u!114 &1416552896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416552892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e0df1e3a76d4ed88c589725e1b9d5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1456731267
 GameObject:
   m_ObjectHideFlags: 0
