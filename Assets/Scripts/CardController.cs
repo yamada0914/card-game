@@ -6,8 +6,10 @@ public class CardController : MonoBehaviour
     public CardModel model;        // データ(model)に関することを操作
     public CardMovement movement;  // カードの移動に関することを操作
 
+    GameManager gameManager;
     public void Awake()
     {
+        gameManager = GameManager.instance;
         views = GetComponent<CardViews>();
         movement = GetComponent<CardMovement>();
     }
@@ -24,15 +26,25 @@ public class CardController : MonoBehaviour
         SetCanAttack(false);
     }
 
+    public void Heal(CardController friendCard)
+    {
+        model.Heal(friendCard);
+        friendCard.RefreshView();
+    }
+
+    public void RefreshView()
+    {
+        views.Refresh(model);
+    }
     public void SetCanAttack(bool canAttack)
     {
         model.canAttack = canAttack;
         views.SetActivateSelectablePanel(canAttack);
     }
 
-    public void OnField(bool isPlayer)
+    public void OnField()
     {
-        GameManager.instance.ReduceManaCost(model.cost, isPlayer);
+        gameManager.ReduceManaCost(model.cost, model.isPlayerCard);
         model.isFieldCard = true;
         if (model.ability == ABILITY.INIT_ATTACKABLE)
         {
@@ -43,11 +55,55 @@ public class CardController : MonoBehaviour
     {
         if (model.isAlive)
         {
-            views.Refresh(model);
+            RefreshView();
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    public void UseSpellTo(CardController target)
+    {
+        switch (model.spell)
+        {
+            // 敵カード 1 体に攻撃
+            case SPELL.DAMAGE_ENEMY_CARD:
+                Attack(target);
+                target.CheckIsAlive();
+                break;
+            // 敵カード全員に攻撃
+            case SPELL.DAMAGE_ENEMY_CARDS:
+                CardController[] enemyCards = gameManager.GetFieldCards(this.model.isPlayerCard);
+                foreach (CardController enemyCard in enemyCards)
+                {
+                    Attack(enemyCard);
+                }
+                foreach (CardController enemyCard in enemyCards)
+                {
+                    enemyCard.CheckIsAlive();
+                }
+                break;
+            case SPELL.DAMAGE_ENEMY_HERO:
+                gameManager.AttackToHero(this);
+                gameManager.CheckHeroHp();
+                break;
+            case SPELL.HEAL_FRIEND_CARD:
+                Heal(target);
+                break;
+            case SPELL.HEAL_FRIEND_CARDS:
+                CardController[] friendCards = gameManager.GetFieldCards(this.model.isPlayerCard);
+                foreach (CardController friendCard in friendCards)
+                {
+                    Heal(friendCard);
+                }
+                break;
+            case SPELL.HEAL_FRIEND_HERO:
+                gameManager.HealToHero(this);
+                break;
+            case SPELL.NONE:
+                return;
+        }
+        Destroy(this.gameObject);
     }
 }

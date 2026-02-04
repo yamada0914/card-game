@@ -25,7 +25,7 @@ public class AttackedCard : MonoBehaviour, IDropHandler
         }
 
         // 敵フィールドにシールドがあればシールドキャラしか攻撃できない
-        CardController[] enemyFieldCards = GameManager.instance.GetEnemyFieldCards();
+        CardController[] enemyFieldCards = GameManager.instance.GetFieldCards(attacker.model.isPlayerCard);
         if (Array.Exists(enemyFieldCards, card => card.model.ability == ABILITY.SHIELD) && defender.model.ability != ABILITY.SHIELD)
         {
             return;

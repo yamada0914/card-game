@@ -32,7 +32,7 @@ public class AI : MonoBehaviour
             CardController enemyCard = selectableHandCardList[0];
             // カードを移動
             StartCoroutine(enemyCard.movement.MoveToField(gameManager.enemyFieldTransform));
-            enemyCard.OnField(false);
+            enemyCard.OnField();
             handCardList = gameManager.enemyHandTransform.GetComponentsInChildren<CardController>();
             yield return new WaitForSeconds(1);
         }
@@ -74,7 +74,7 @@ public class AI : MonoBehaviour
             {
                 StartCoroutine(attacker.movement.MoveToTarget(gameManager.playerHero));
                 yield return new WaitForSeconds(0.25f);
-                gameManager.AttackToHero(attacker, false);
+                gameManager.AttackToHero(attacker);
                 yield return new WaitForSeconds(0.25f);
                 gameManager.CheckHeroHp();
             }

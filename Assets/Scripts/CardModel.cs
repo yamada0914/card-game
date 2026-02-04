@@ -9,6 +9,7 @@ public class CardModel
     public int cost;
     public Sprite icon;
     public ABILITY ability;
+    public SPELL spell;
 
     public bool isAlive;
     public bool canAttack;
@@ -24,6 +25,8 @@ public class CardModel
         cost = cardEntity.cost;
         icon = cardEntity.icon;
         ability = cardEntity.ability;
+        spell = cardEntity.spell;
+
         isAlive = true;
         isPlayerCard = isPlayer;
     }
@@ -36,9 +39,19 @@ public class CardModel
             isAlive = false;
         }
     }
+    // 自分を回復させる
+    void RecoverHP(int hp)
+    {
+        this.hp += hp;
+    }
 
     public void Attack(CardController card)
     {
         card.model.Damage(at);
+    }
+    // card を回復させる
+    public void Heal(CardController card)
+    {
+        card.model.RecoverHP(at);
     }
 }

@@ -27,7 +27,7 @@ public class DropPlace : MonoBehaviour, IDropHandler
             {
                 return;
             }
-            card.OnField(true);
+            card.OnField();
         }
     }
 }

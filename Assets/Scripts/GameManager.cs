@@ -45,8 +45,8 @@ public class GameManager : MonoBehaviour
     void StartGame()
     {
         uiManager.HideResultPanel();
-        player.Init(new List<int>() {3, 1, 2, 2, 2});
-        enemy.Init(new List<int>() {3, 2, 1, 1, 1});
+        player.Init(new List<int>() {3, 4, 2, 2, 2});
+        enemy.Init(new List<int>() {3, 2, 2, 2, 1});
 
         uiManager.ShowHeroHp(player.heroHp, enemy.heroHp);
         uiManager.ShowManaCost(player.manaCost, enemy.manaCost);
@@ -149,6 +149,18 @@ public class GameManager : MonoBehaviour
         ChangeTurn();
     }
 
+    public CardController[] GetPlayerFieldCards(bool isPlayer)
+    {
+        if (isPlayer)
+        {
+            return enemyFieldTransform.GetComponentsInChildren<CardController>();
+        }
+        else
+        {
+            return playerFieldTransform.GetComponentsInChildren<CardController>();
+        }
+    }
+
     public void OnClickTurnEndButton()
     {
         if (isPlayerTurn)
@@ -157,9 +169,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public CardController[] GetEnemyFieldCards()
+    public CardController[] GetFieldCards(bool isPlayer)
     {
-        return enemyFieldTransform.GetComponentsInChildren<CardController>();
+        if (isPlayer)
+        {
+            return playerFieldTransform.GetComponentsInChildren<CardController>();
+        }
+        else
+        {
+            return enemyFieldTransform.GetComponentsInChildren<CardController>();
+        }
     }
 
     public void ChangeTurn()
@@ -208,9 +227,9 @@ public class GameManager : MonoBehaviour
         defender.CheckIsAlive();
     }
 
-    public void AttackToHero(CardController attacker, bool isPlayerCard)
+    public void AttackToHero(CardController attacker)
     {
-        if (isPlayerCard)
+        if (attacker.model.isPlayerCard)
         {
             enemy.heroHp -= attacker.model.at;
         }
@@ -218,7 +237,19 @@ public class GameManager : MonoBehaviour
         {
             player.heroHp -= attacker.model.at;
         }
-        attacker.SetCanAttack(false);
+        uiManager.ShowHeroHp(player.heroHp, enemy.heroHp);
+    }
+    public void HealToHero(CardController healer)
+    {
+        if (healer.model.isPlayerCard)
+        {
+            player.heroHp += healer.model.at;
+        }
+        else
+        {
+            enemy.heroHp += healer.model.at;
+        }
+        healer.SetCanAttack(false);
         uiManager.ShowHeroHp(player.heroHp, enemy.heroHp);
     }
     public void CheckHeroHp()
