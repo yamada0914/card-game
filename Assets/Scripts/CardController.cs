@@ -154,6 +154,7 @@ public class CardController : MonoBehaviour
             case SPELL.NONE:
                 return;
         }
+        gameManager.ReduceManaCost(model.cost, model.isPlayerCard);
         Destroy(this.gameObject);
     }
 }

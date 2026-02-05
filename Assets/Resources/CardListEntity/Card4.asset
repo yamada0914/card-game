@@ -18,4 +18,4 @@ MonoBehaviour:
   cost: 3
   icon: {fileID: -6280103770924348703, guid: ff865cff67d594fe686327dbaa61387d, type: 3}
   ability: 0
-  spell: 2
+  spell: 5

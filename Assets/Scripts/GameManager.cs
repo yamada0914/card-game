@@ -8,22 +8,21 @@ public class GameManager : MonoBehaviour
 {
     public GamePlayerManager player;
     public GamePlayerManager enemy;
+
     [SerializeField] AI enemyAI;
     [SerializeField] UIManager uiManager;
+
     public Transform playerHandTransform, playerFieldTransform, enemyHandTransform, enemyFieldTransform;
+
     [SerializeField] CardController cardPrefab;
 
     public bool isPlayerTurn;
-
-    //デッキの生成
+    public Transform playerHero;
+    public Transform enemyHero;
 
     const int INITIAL_HERO_HP = 10;
     const int INITIAL_MANA_COST = 10;
     const int TIME_LIMIT = 20;
-
-
-    [SerializeField] public Transform playerHero;
-
 
     int timeCount;
     // シングルトン化

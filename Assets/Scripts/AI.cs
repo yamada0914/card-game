@@ -38,7 +38,7 @@ public class AI : MonoBehaviour
             // スペルカードなら使用する
             if (selectedCard.IsSpell)
             {
-                CastSpellOf(selectedCard);
+                StartCoroutine(CastSpellOf(selectedCard));
             }
             else
             {
@@ -99,27 +99,37 @@ public class AI : MonoBehaviour
         gameManager.ChangeTurn();
     }
 
-    void CastSpellOf(CardController card)
+    IEnumerator CastSpellOf(CardController card)
     {
         CardController target = null;
-        if (card.model.spell == SPELL.HEAL_FRIEND_CARD)
+        Transform movePosition = null;
+        switch (card.model.spell)
         {
-            CardController[] friendCards = gameManager.GetFieldCards(card.model.isPlayerCard);
-            if (friendCards.Length == 0)
-            {
-                return;
-            }
-            target = friendCards[0];
+            case SPELL.DAMAGE_ENEMY_CARD:
+                target = gameManager.GetFieldCards(!card.model.isPlayerCard)[0];
+                movePosition = target.transform;
+                break;
+            case SPELL.HEAL_FRIEND_CARD:
+                target = gameManager.GetFieldCards(card.model.isPlayerCard)[0];
+                movePosition = target.transform;
+                break;
+            case SPELL.DAMAGE_ENEMY_CARDS:
+                movePosition = gameManager.playerFieldTransform;
+                break;
+            case SPELL.HEAL_FRIEND_CARDS:
+                movePosition = gameManager.enemyFieldTransform;
+                break;
+            case SPELL.DAMAGE_ENEMY_HERO:
+                movePosition = gameManager.playerHero;
+                break;
+            case SPELL.HEAL_FRIEND_HERO:
+                movePosition = gameManager.enemyHero;
+                break;
+
         }
-        else if (card.model.spell == SPELL.DAMAGE_ENEMY_CARD)
-        {
-            CardController[] enemyCards = gameManager.GetFieldCards(!card.model.isPlayerCard);
-            if (enemyCards.Length == 0)
-            {
-                return;
-            }
-            target = enemyCards[0];
-        }
+        // 移動先としてターゲットの位置を設定
+        StartCoroutine(card.movement.MoveToTarget(movePosition));
+        yield return new WaitForSeconds(0.25f);
         card.UseSpellTo(target);
     }
 
