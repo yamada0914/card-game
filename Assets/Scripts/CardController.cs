@@ -7,6 +7,10 @@ public class CardController : MonoBehaviour
     public CardMovement movement;  // カードの移動に関することを操作
 
     GameManager gameManager;
+    public bool IsSpell
+    {
+        get { return model.spell != SPELL.NONE; }
+    }
     public void Awake()
     {
         gameManager = GameManager.instance;
@@ -63,6 +67,36 @@ public class CardController : MonoBehaviour
         }
     }
 
+    public bool CanUseSpell()
+    {
+        switch (model.spell)
+        {
+            case SPELL.DAMAGE_ENEMY_CARD:
+            case SPELL.DAMAGE_ENEMY_CARDS:
+                CardController[] enemyCards = gameManager.GetFieldCards(!model.isPlayerCard);
+                if (enemyCards.Length == 0)
+                {
+                    return false;
+                }
+                return true;
+            case SPELL.DAMAGE_ENEMY_HERO:
+            case SPELL.HEAL_FRIEND_HERO:
+                return true;
+
+            case SPELL.HEAL_FRIEND_CARD:
+            case SPELL.HEAL_FRIEND_CARDS:
+                CardController[] friendCards = gameManager.GetFieldCards(model.isPlayerCard);
+                if (friendCards.Length == 0)
+                {
+                    return false;
+                }
+                return true;
+            case SPELL.NONE:
+                return false;
+        }
+        return false;
+    }
+
     public void UseSpellTo(CardController target)
     {
         switch (model.spell)
@@ -74,7 +108,7 @@ public class CardController : MonoBehaviour
                 break;
             // 敵カード全員に攻撃
             case SPELL.DAMAGE_ENEMY_CARDS:
-                CardController[] enemyCards = gameManager.GetFieldCards(this.model.isPlayerCard);
+                CardController[] enemyCards = gameManager.GetFieldCards(!this.model.isPlayerCard);
                 foreach (CardController enemyCard in enemyCards)
                 {
                     Attack(enemyCard);
