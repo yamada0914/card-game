@@ -103,6 +103,14 @@ public class CardController : MonoBehaviour
         {
             // 敵カード 1 体に攻撃
             case SPELL.DAMAGE_ENEMY_CARD:
+                if (target == null)
+                {
+                    return;
+                }
+                if (target.model.isPlayerCard == model.isPlayerCard)
+                {
+                    return;
+                }
                 Attack(target);
                 target.CheckIsAlive();
                 break;
@@ -123,6 +131,14 @@ public class CardController : MonoBehaviour
                 gameManager.CheckHeroHp();
                 break;
             case SPELL.HEAL_FRIEND_CARD:
+                if (target == null)
+                {
+                    return;
+                }
+                if (target.model.isPlayerCard != model.isPlayerCard)
+                {
+                    return;
+                }
                 Heal(target);
                 break;
             case SPELL.HEAL_FRIEND_CARDS:
